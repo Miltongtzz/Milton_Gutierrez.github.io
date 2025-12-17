@@ -1,0 +1,282 @@
+/* Variables CSS */
+:root {
+    --primary: #3b82f6;
+    --secondary: #8b5cf6;
+    --accent: #06b6d4;
+    --text: #1f2937;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --border: #e5e7eb;
+}
+
+.dark-mode {
+    --primary: #60a5fa;
+    --secondary: #a78bfa;
+    --accent: #22d3ee;
+    --text: #f3f4f6;
+    --bg: #111827;
+    --card: #1f2937;
+    --border: #374151;
+}
+
+/* Estilos base */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.code-font {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Utilidades de texto y fondo */
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.hero-pattern {
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 40%), 
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+}
+
+/* Botones */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-outline {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-outline:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Animaciones */
+.floating {
+    animation: floating 6s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Títulos de sección */
+.section-title {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 3rem;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 50%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+/* Hero section */
+.hero-content {
+    position: relative;
+    z-index: 10;
+}
+
+.hero-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Timeline */
+.timeline-item {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary);
+}
+
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 1.7rem;
+    width: 2px;
+    height: calc(100% + 1rem);
+    background: rgba(59, 130, 246, 0.3);
+}
+
+.timeline-item:last-child::after {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .section-title::after {
+        width: 30%;
+    }
+    
+    .hero-visual {
+        margin-top: 2rem;
+    }
+    
+    .btn-primary, .btn-outline {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .color-option {
+        width: 30px;
+        height: 30px;
+        margin: 0 3px;
+    }
+    
+    .theme-btn {
+        padding: 0.5rem;
+    }
+}
+
+/* Variables CSS - Paletas de color */
+:root {
+    /* Paleta Azul (default) */
+    --primary: #3b82f6;
+    --secondary: #8b5cf6;
+    --accent: #06b6d4;
+    --text: #1f2937;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --border: #e5e7eb;
+}
+
+.dark-mode {
+    --primary: #60a5fa;
+    --secondary: #a78bfa;
+    --accent: #22d3ee;
+    --text: #f3f4f6;
+    --bg: #111827;
+    --card: #1f2937;
+    --border: #374151;
+}
+
+/* Paleta Verde */
+.color-scheme-green {
+    --primary: #10b981;
+    --secondary: #059669;
+    --accent: #06b6d4;
+}
+
+.dark-mode.color-scheme-green {
+    --primary: #34d399;
+    --secondary: #10b981;
+    --accent: #22d3ee;
+}
+
+/* Paleta Roja */
+.color-scheme-red {
+    --primary: #f43f5e;
+    --secondary: #e11d48;
+    --accent: #06b6d4;
+}
+
+.dark-mode.color-scheme-red {
+    --primary: #fb7185;
+    --secondary: #f43f5e;
+    --accent: #22d3ee;
+}
+
+/* Paleta Púrpura */
+.color-scheme-purple {
+    --primary: #8b5cf6;
+    --secondary: #a855f7;
+    --accent: #06b6d4;
+}
+
+.dark-mode.color-scheme-purple {
+    --primary: #a78bfa;
+    --secondary: #c4b5fd;
+    --accent: #22d3ee;
+}
+
+/* Paleta Naranja */
+.color-scheme-orange {
+    --primary: #f97316;
+    --secondary: #ea580c;
+    --accent: #06b6d4;
+}
+
+.dark-mode.color-scheme-orange {
+    --primary: #fb923c;
+    --secondary: #fdba74;
+    --accent: #22d3ee;
+}
+
+/* Resto del CSS permanece igual */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+/* ... (el resto de tu CSS existente) */
