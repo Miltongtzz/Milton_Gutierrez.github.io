@@ -640,32 +640,33 @@
                     </div>
                     
                     <div class="md:w-3/5 p-6 lg:p-8">
-                        <form id="contact-form" method="POST">
+                        <form id="contact-form" action="https://formsubmit.co/milton.gutierrez.tech@gmail.com" method="POST">
                             <div class="grid md:grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <label for="name" class="block text-gray-700 dark:text-gray-300 mb-2">Nombre</label>
-                                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-transparent transition duration-300">
+                                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 transition duration-300">
                                 </div>
                                 
                                 <div>
                                     <label for="email" class="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
-                                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-transparent transition duration-300">
+                                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 transition duration-300">
                                 </div>
                             </div>
                             
                             <div class="mb-4">
                                 <label for="subject" class="block text-gray-700 dark:text-gray-300 mb-2">Asunto</label>
-                                <input type="text" id="subject" name="_subject" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-transparent transition duration-300">
+                                <input type="text" id="subject" name="_subject" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 transition duration-300">
                             </div>
                             
                             <div class="mb-4">
                                 <label for="message" class="block text-gray-700 dark:text-gray-300 mb-2">Mensaje</label>
-                                <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-transparent transition duration-300"></textarea>
+                                <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 transition duration-300"></textarea>
                             </div>
                             
                             <!-- Campos ocultos de configuración de FormSubmit -->
                             <input type="hidden" name="_captcha" value="false">
                             <input type="hidden" name="_template" value="table">
+                            <input type="text" name="_honey" style="display:none">
                             
                             <button type="submit" class="btn-primary w-full justify-center">
                                 <i class="fas fa-paper-plane mr-2"></i> Enviar Mensaje
@@ -693,47 +694,18 @@
     
     <!-- Script para el formulario de contacto -->
     <script>
-        document.getElementById('contact-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
             const formStatus = document.getElementById('form-status');
             const submitButton = this.querySelector('button[type="submit"]');
             
-            // Deshabilitar botón y mostrar mensaje de envío
+            // Mostrar mensaje de envío
             submitButton.disabled = true;
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
             formStatus.className = 'mt-4 text-center block text-gray-600 dark:text-gray-400';
-            formStatus.textContent = 'Enviando mensaje...';
+            formStatus.textContent = 'Redirigiendo a confirmación...';
             
-            const formData = new FormData(this);
-            
-            try {
-                // Usando FormSubmit - Los mensajes llegarán a tu correo automáticamente
-                const response = await fetch('https://formsubmit.co/milton.gutierrez.tech@gmail.com', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (response.ok) {
-                    formStatus.className = 'mt-4 text-center block text-green-600 dark:text-green-400 font-semibold';
-                    formStatus.textContent = '¡Mensaje enviado con éxito! Te responderé pronto. 🎉';
-                    this.reset();
-                    
-                    // Ocultar mensaje después de 5 segundos
-                    setTimeout(() => {
-                        formStatus.className = 'mt-4 text-center hidden';
-                    }, 5000);
-                } else {
-                    throw new Error('Error en el envío');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                formStatus.className = 'mt-4 text-center block text-red-600 dark:text-red-400';
-                formStatus.textContent = 'Hubo un error al enviar el mensaje. Por favor, intenta de nuevo o contáctame directamente por email a milton.gutierrez.tech@gmail.com';
-            } finally {
-                submitButton.disabled = false;
-                submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Enviar Mensaje';
-            }
+            // FormSubmit manejará el envío y la redirección automáticamente
+            // No prevenir el comportamiento por defecto para que funcione correctamente
         });
     </script>
 </body>
