@@ -1,16 +1,19 @@
-// form.js - VERSIÓN QUE CAPTURA VALORES ANTES DE BORRARSE
+// form.js - VERSIÓN FINAL CON BOTÓN SUBMIT
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ form.js cargado - Captura temprana activada');
+    console.log('✅ form.js cargado - Botón submit activo');
     
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submit-btn');
     
-    if (!contactForm) return;
+    if (!contactForm || !submitBtn) {
+        console.error('❌ Elementos no encontrados');
+        return;
+    }
     
-    // 1. DESACTIVAR CUALQUIER comportamiento automático
+    // 1. DESACTIVAR validación HTML nativa
     contactForm.setAttribute('novalidate', 'novalidate');
     
-    // 2. Guardar referencias a los inputs
+    // 2. Referencias a inputs
     const inputs = {
         name: document.getElementById('name'),
         email: document.getElementById('email'),
@@ -18,85 +21,91 @@ document.addEventListener('DOMContentLoaded', function() {
         message: document.getElementById('message')
     };
     
-    // 3. Variable para guardar valores ANTES de validar
-    let capturedValues = {};
+    // 3. Variable para capturar valores TEMPRANO
+    let formValues = {};
     
-    // 4. INTERCEPTAR el clic del botón ANTES que el submit
-    submitBtn.addEventListener('click', function(e) {
-        console.log('🟡 CLIC EN BOTÓN - Capturando valores...');
+    // 4. INTERCEPTAR el MOUSEDOWN (ANTES del click/submit)
+    submitBtn.addEventListener('mousedown', function(e) {
+        console.log('🟡 MOUSEDOWN - Capturando valores TEMPRANO...');
         
-        // Capturar valores INMEDIATAMENTE
-        capturedValues = {
+        // Capturar valores cuando el usuario PRESIONA el botón (antes de soltar)
+        formValues = {
             name: inputs.name ? inputs.name.value : '',
             email: inputs.email ? inputs.email.value : '',
             subject: inputs.subject ? inputs.subject.value : '',
             message: inputs.message ? inputs.message.value : ''
         };
         
-        console.log('📝 Valores capturados:', capturedValues);
-        
-        // NO prevenir el comportamiento aquí todavía
-        // Solo capturamos los valores
+        console.log('📝 Valores capturados (mousedown):', formValues);
     });
     
-    // 5. Función para validar usando valores CAPTURADOS
-    function validateWithCapturedValues() {
-        console.log('🔍 Validando con valores capturados:', capturedValues);
+    // 5. También capturar en touchstart para móviles
+    submitBtn.addEventListener('touchstart', function(e) {
+        console.log('📱 TOUCHSTART - Capturando valores...');
         
-        let allValid = true;
+        formValues = {
+            name: inputs.name ? inputs.name.value : '',
+            email: inputs.email ? inputs.email.value : '',
+            subject: inputs.subject ? inputs.subject.value : '',
+            message: inputs.message ? inputs.message.value : ''
+        };
+    });
+    
+    // 6. Función de validación
+    function validateForm() {
+        console.log('🔍 Validando con valores:', formValues);
+        
+        let isValid = true;
         
         // Validar NOMBRE
-        if (!capturedValues.name || capturedValues.name.trim().length === 0) {
-            console.log('❌ Nombre vacío (capturado)');
+        if (!formValues.name || formValues.name.trim().length === 0) {
             showError(inputs.name, 'Este campo es requerido');
-            allValid = false;
-        } else if (capturedValues.name.trim().length < 2) {
-            console.log('❌ Nombre muy corto:', capturedValues.name);
+            isValid = false;
+        } else if (formValues.name.trim().length < 2) {
             showError(inputs.name, 'Mínimo 2 caracteres');
-            allValid = false;
+            isValid = false;
         } else {
             clearError(inputs.name);
-            console.log('✅ Nombre válido:', capturedValues.name);
         }
         
         // Validar EMAIL
-        if (!capturedValues.email || capturedValues.email.trim().length === 0) {
+        if (!formValues.email || formValues.email.trim().length === 0) {
             showError(inputs.email, 'Este campo es requerido');
-            allValid = false;
-        } else if (!isValidEmail(capturedValues.email)) {
+            isValid = false;
+        } else if (!isValidEmail(formValues.email)) {
             showError(inputs.email, 'Por favor ingresa un email válido');
-            allValid = false;
+            isValid = false;
         } else {
             clearError(inputs.email);
         }
         
         // Validar ASUNTO
-        if (!capturedValues.subject || capturedValues.subject.trim().length === 0) {
+        if (!formValues.subject || formValues.subject.trim().length === 0) {
             showError(inputs.subject, 'Este campo es requerido');
-            allValid = false;
-        } else if (capturedValues.subject.trim().length < 5) {
+            isValid = false;
+        } else if (formValues.subject.trim().length < 5) {
             showError(inputs.subject, 'Mínimo 5 caracteres');
-            allValid = false;
+            isValid = false;
         } else {
             clearError(inputs.subject);
         }
         
         // Validar MENSAJE
-        if (!capturedValues.message || capturedValues.message.trim().length === 0) {
+        if (!formValues.message || formValues.message.trim().length === 0) {
             showError(inputs.message, 'Este campo es requerido');
-            allValid = false;
-        } else if (capturedValues.message.trim().length < 10) {
+            isValid = false;
+        } else if (formValues.message.trim().length < 10) {
             showError(inputs.message, 'Mínimo 10 caracteres');
-            allValid = false;
+            isValid = false;
         } else {
             clearError(inputs.message);
         }
         
-        console.log('📊 Validación completa:', allValid ? '✅ VÁLIDO' : '❌ INVALIDO');
-        return allValid;
+        console.log('✅ Validación:', isValid ? 'VÁLIDO' : 'INVÁLIDO');
+        return isValid;
     }
     
-    // 6. Funciones auxiliares
+    // 7. Funciones auxiliares
     function showError(input, message) {
         if (!input) return;
         
@@ -104,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (errorDiv) {
             errorDiv.textContent = message;
             errorDiv.classList.remove('hidden');
-            errorDiv.style.display = 'block';
         }
         
         input.classList.add('border-red-500', 'focus:ring-red-500');
@@ -117,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const errorDiv = document.getElementById(`${input.id}-error`);
         if (errorDiv) {
             errorDiv.classList.add('hidden');
-            errorDiv.style.display = 'none';
         }
         
         input.classList.remove('border-red-500', 'focus:ring-red-500');
@@ -128,91 +135,89 @@ document.addEventListener('DOMContentLoaded', function() {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
     
-    // 7. MANEJADOR PRINCIPAL del formulario
+    // 8. MANEJADOR PRINCIPAL del formulario
     contactForm.addEventListener('submit', function(event) {
-        console.log('🟡 EVENTO SUBMIT - Usando valores capturados');
+        console.log('🟡 EVENTO SUBMIT - Iniciando validación...');
         
-        // PREVENIR SIEMPRE el envío automático
+        // PREVENIR el envío automático
         event.preventDefault();
-        event.stopPropagation();
         
-        // Validar usando los valores CAPTURADOS (no los actuales)
-        const isValid = validateWithCapturedValues();
+        // Si no hay valores capturados (por si se saltó mousedown), capturar ahora
+        if (!formValues.name && inputs.name) {
+            formValues.name = inputs.name.value;
+            formValues.email = inputs.email.value;
+            formValues.subject = inputs.subject.value;
+            formValues.message = inputs.message.value;
+            console.log('⚠️ Valores capturados en submit:', formValues);
+        }
+        
+        // Validar el formulario
+        const isValid = validateForm();
         
         if (!isValid) {
-            console.log('🔴 NO enviar - Errores encontrados');
-            
-            // Mostrar mensaje general
+            console.log('🔴 Validación fallida - No enviar');
             showFormStatus('Por favor, corrige los errores en el formulario', 'error');
             return;
         }
         
-        console.log('🟢 TODO VÁLIDO - Enviando formulario...');
+        console.log('🟢 Validación exitosa - Enviando...');
         
-        // Preparar envío
+        // Mostrar estado de carga
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
         
         showFormStatus('Enviando tu mensaje...', 'info');
         
-        // Crear FormData con los valores ORIGINALES del formulario
-        // (restaurar valores si se borraron)
-        restoreFormValues();
+        // Asegurar que los valores estén en los inputs antes de enviar
+        if (inputs.name) inputs.name.value = formValues.name;
+        if (inputs.email) inputs.email.value = formValues.email;
+        if (inputs.subject) inputs.subject.value = formValues.subject;
+        if (inputs.message) inputs.message.value = formValues.message;
         
+        // Crear FormData
         const formData = new FormData(contactForm);
         
-        // Enviar con Fetch
+        // Enviar con Fetch API
         fetch(contactForm.action, {
             method: 'POST',
             body: formData,
             headers: { 'Accept': 'application/json' }
         })
         .then(response => {
+            console.log('📨 Respuesta recibida:', response.status);
+            
             if (response.ok) {
-                // Éxito - redirigir
+                // Redirigir a página de gracias
+                console.log('✅ Éxito - Redirigiendo...');
                 window.location.href = 'https://miltongtzz.github.io/portafolio/gracias.html';
             } else {
                 throw new Error('Error ' + response.status);
             }
         })
         .catch(error => {
-            console.error('❌ Error:', error);
+            console.error('❌ Error en el envío:', error);
+            
+            // Mostrar error
             showFormStatus('Error al enviar. Intenta nuevamente.', 'error');
             
             // Restaurar botón
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
             
-            // Fallback tradicional
+            // Fallback: envío tradicional después de 2 segundos
             setTimeout(() => {
-                restoreFormValues();
-                const handler = arguments.callee;
-                contactForm.removeEventListener('submit', handler);
+                console.log('🔄 Intentando envío tradicional...');
+                // Quitar temporalmente el event listener
+                const currentHandler = arguments.callee;
+                contactForm.removeEventListener('submit', currentHandler);
+                // Enviar
                 contactForm.submit();
             }, 2000);
         });
     });
     
-    // 8. Función para RESTAURAR valores si se borraron
-    function restoreFormValues() {
-        console.log('🔄 Restaurando valores en el formulario...');
-        
-        if (inputs.name && capturedValues.name !== undefined) {
-            inputs.name.value = capturedValues.name;
-        }
-        if (inputs.email && capturedValues.email !== undefined) {
-            inputs.email.value = capturedValues.email;
-        }
-        if (inputs.subject && capturedValues.subject !== undefined) {
-            inputs.subject.value = capturedValues.subject;
-        }
-        if (inputs.message && capturedValues.message !== undefined) {
-            inputs.message.value = capturedValues.message;
-        }
-    }
-    
-    // 9. Función para mostrar estado
+    // 9. Función para mostrar estado del formulario
     function showFormStatus(message, type) {
         const formStatus = document.getElementById('form-status');
         if (!formStatus) return;
@@ -229,30 +234,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         formStatus.classList.remove('hidden');
+        
+        // Ocultar después de 5 segundos (si no es éxito)
+        if (type !== 'success') {
+            setTimeout(() => {
+                formStatus.classList.add('hidden');
+            }, 5000);
+        }
     }
     
-    // 10. Limpiar errores al escribir
+    // 10. Limpiar errores cuando el usuario escribe
     Object.values(inputs).forEach(input => {
         if (input) {
             input.addEventListener('input', function() {
                 clearError(this);
-                // Actualizar valores capturados también
-                capturedValues[this.id] = this.value;
+                // Actualizar valores en tiempo real
+                formValues[this.id] = this.value;
+            });
+            
+            // También limpiar al hacer blur
+            input.addEventListener('blur', function() {
+                formValues[this.id] = this.value;
             });
         }
     });
     
-    console.log('✅ Sistema de captura temprana configurado');
+    console.log('✅ Formulario configurado correctamente');
     
-    // 11. DEBUG
-    window.verValores = function() {
-        console.log('=== VALORES ACTUALES ===');
-        console.log('Capturados:', capturedValues);
-        console.log('En inputs:');
+    // 11. FUNCIONES DE DEBUG
+    window.verEstado = function() {
+        console.log('=== ESTADO ACTUAL ===');
+        console.log('Valores capturados:', formValues);
+        console.log('Valores en inputs:');
         Object.entries(inputs).forEach(([key, input]) => {
             if (input) {
-                console.log(`${key}: "${input.value}" (capturado: "${capturedValues[key]}")`);
+                console.log(`${key}: "${input.value}"`);
             }
         });
+    };
+    
+    window.simularEnvio = function() {
+        console.log('🧪 Simulando envío...');
+        contactForm.dispatchEvent(new Event('submit'));
     };
 });
