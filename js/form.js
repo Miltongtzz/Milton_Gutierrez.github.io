@@ -1,183 +1,208 @@
-// form.js - VERSIÓN SUPER SIMPLE Y FUNCIONAL
+// form.js - VERSIÓN ULTRA SIMPLE (SOLO validación básica)
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ form.js cargado');
+    console.log('🚀 form.js cargado - VERSIÓN SIMPLE');
     
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submit-btn');
-    const formStatus = document.getElementById('form-status');
     
     if (!contactForm) {
         console.error('❌ No se encontró el formulario');
         return;
     }
     
-    console.log('✅ Formulario encontrado');
+    // DESACTIVAR COMPLETAMENTE validación HTML
+    contactForm.setAttribute('novalidate', 'novalidate');
+    contactForm.noValidate = true;
     
-    // Desactivar validación HTML nativa
-    contactForm.setAttribute('novalidate', true);
+    console.log('✅ Validación HTML desactivada');
     
-    // Elementos del formulario
+    // Obtener inputs
     const nameInput = document.getElementById('name');
     const emailInput = document.getElementById('email');
     const subjectInput = document.getElementById('subject');
     const messageInput = document.getElementById('message');
     
-    // Verificar que todos los inputs existan
+    // Verificar inputs
     if (!nameInput || !emailInput || !subjectInput || !messageInput) {
-        console.error('❌ Faltan inputs en el formulario');
+        console.error('❌ Faltan inputs');
         return;
     }
     
     console.log('✅ Todos los inputs encontrados');
     
-    // Función para mostrar error
-    function showError(input, message) {
-        const errorDiv = document.getElementById(`${input.id}-error`);
-        if (errorDiv) {
-            errorDiv.textContent = message;
-            errorDiv.classList.remove('hidden');
-            errorDiv.style.display = 'block';
-        }
+    // FUNCIÓN: Validar nombre (MUY FLEXIBLE)
+    function validateName() {
+        const value = nameInput.value.trim();
+        const errorDiv = document.getElementById('name-error');
         
-        input.classList.add('border-red-500', 'focus:ring-red-500');
-        input.classList.remove('border-gray-300', 'dark:border-gray-700', 'focus:ring-blue-500');
-        
-        console.log(`❌ Error en ${input.id}: ${message}`);
-    }
-    
-    // Función para limpiar error
-    function clearError(input) {
-        const errorDiv = document.getElementById(`${input.id}-error`);
-        if (errorDiv) {
-            errorDiv.classList.add('hidden');
-            errorDiv.style.display = 'none';
-        }
-        
-        input.classList.remove('border-red-500', 'focus:ring-red-500');
-        input.classList.add('border-gray-300', 'dark:border-gray-700', 'focus:ring-blue-500');
-    }
-    
-    // Validar email
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-    
-    // Validar campo individual
-    function validateField(input) {
-        const value = input.value.trim();
+        console.log(`🔍 Validando nombre: "${value}" (${value.length} caracteres)`);
         
         // Limpiar error primero
-        clearError(input);
+        if (errorDiv) {
+            errorDiv.classList.add('hidden');
+            nameInput.classList.remove('border-red-500');
+            nameInput.classList.add('border-gray-300', 'dark:border-gray-700');
+        }
         
-        // Si está vacío
+        // Validación MUY simple
         if (!value) {
-            showError(input, 'Este campo es requerido');
-            return false;
-        }
-        
-        // Validaciones específicas por tipo
-        if (input.type === 'email') {
-            if (!isValidEmail(value)) {
-                showError(input, 'Por favor ingresa un email válido');
-                return false;
+            console.log('❌ Nombre vacío');
+            if (errorDiv) {
+                errorDiv.textContent = 'Por favor, escribe tu nombre';
+                errorDiv.classList.remove('hidden');
+                nameInput.classList.add('border-red-500');
             }
-        }
-        
-        // Validar longitud mínima para asunto y mensaje
-        if (input.id === 'subject' && value.length < 5) {
-            showError(input, 'Mínimo 5 caracteres');
             return false;
         }
         
-        if (input.id === 'message' && value.length < 10) {
-            showError(input, 'Mínimo 10 caracteres');
+        // ACEPTA CUALQUIER COSA: 1 carácter, 100 caracteres, números, símbolos
+        if (value.length >= 1) { // ¡Incluso 1 carácter es válido!
+            console.log('✅ Nombre válido:', value);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // FUNCIÓN: Validar email
+    function validateEmail() {
+        const value = emailInput.value.trim();
+        const errorDiv = document.getElementById('email-error');
+        
+        // Limpiar error
+        if (errorDiv) errorDiv.classList.add('hidden');
+        emailInput.classList.remove('border-red-500');
+        
+        if (!value) {
+            if (errorDiv) {
+                errorDiv.textContent = 'Por favor, escribe tu email';
+                errorDiv.classList.remove('hidden');
+                emailInput.classList.add('border-red-500');
+            }
             return false;
         }
         
-        // Para NOMBRE: acepta cualquier cosa con al menos 2 caracteres
-        if (input.id === 'name' && value.length < 2) {
-            showError(input, 'Mínimo 2 caracteres');
+        // Validación simple de email
+        if (!value.includes('@') || !value.includes('.')) {
+            if (errorDiv) {
+                errorDiv.textContent = 'Por favor, escribe un email válido';
+                errorDiv.classList.remove('hidden');
+                emailInput.classList.add('border-red-500');
+            }
             return false;
         }
         
         return true;
     }
     
-    // Validar todo el formulario
-    function validateForm() {
-        console.log('🔍 Validando formulario...');
+    // FUNCIÓN: Validar asunto
+    function validateSubject() {
+        const value = subjectInput.value.trim();
+        const errorDiv = document.getElementById('subject-error');
         
-        const fields = [nameInput, emailInput, subjectInput, messageInput];
-        let isValid = true;
-        let firstInvalidField = null;
+        // Limpiar error
+        if (errorDiv) errorDiv.classList.add('hidden');
+        subjectInput.classList.remove('border-red-500');
         
-        // Limpiar todos los errores primero
-        fields.forEach(field => clearError(field));
-        
-        // Validar cada campo
-        fields.forEach(field => {
-            if (!validateField(field)) {
-                isValid = false;
-                if (!firstInvalidField) {
-                    firstInvalidField = field;
-                }
+        if (!value) {
+            if (errorDiv) {
+                errorDiv.textContent = 'Por favor, escribe un asunto';
+                errorDiv.classList.remove('hidden');
+                subjectInput.classList.add('border-red-500');
             }
-        });
-        
-        console.log(`✅ Formulario ${isValid ? 'VÁLIDO' : 'INVÁLIDO'}`);
-        return { isValid, firstInvalidField };
-    }
-    
-    // Mostrar estado
-    function showStatus(message, type) {
-        if (!formStatus) return;
-        
-        formStatus.textContent = message;
-        formStatus.className = 'p-4 rounded-lg mt-4';
-        
-        // Colores
-        if (type === 'success') {
-            formStatus.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-300');
-        } else if (type === 'error') {
-            formStatus.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-300');
-        } else if (type === 'info') {
-            formStatus.classList.add('bg-blue-100', 'text-blue-700', 'border', 'border-blue-300');
+            return false;
         }
         
-        formStatus.classList.remove('hidden');
+        return true;
     }
     
-    // Evento de envío
-    contactForm.addEventListener('submit', function(e) {
-        console.log('🚀 Intentando enviar formulario...');
-        e.preventDefault(); // Siempre prevenir para validar primero
+    // FUNCIÓN: Validar mensaje
+    function validateMessage() {
+        const value = messageInput.value.trim();
+        const errorDiv = document.getElementById('message-error');
         
-        const validation = validateForm();
+        // Limpiar error
+        if (errorDiv) errorDiv.classList.add('hidden');
+        messageInput.classList.remove('border-red-500');
         
-        if (!validation.isValid) {
-            console.log('❌ Formulario inválido - mostrando errores');
-            showStatus('Por favor, corrige los errores en el formulario', 'error');
-            
-            if (validation.firstInvalidField) {
-                validation.firstInvalidField.focus();
+        if (!value) {
+            if (errorDiv) {
+                errorDiv.textContent = 'Por favor, escribe tu mensaje';
+                errorDiv.classList.remove('hidden');
+                messageInput.classList.add('border-red-500');
             }
-            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // FUNCIÓN: Validar TODO el formulario
+    function validateAll() {
+        console.log('=== VALIDANDO FORMULARIO ===');
+        
+        const nameValid = validateName();
+        const emailValid = validateEmail();
+        const subjectValid = validateSubject();
+        const messageValid = validateMessage();
+        
+        const allValid = nameValid && emailValid && subjectValid && messageValid;
+        
+        console.log('Resultados:', {
+            nombre: nameValid ? '✅' : '❌',
+            email: emailValid ? '✅' : '❌',
+            asunto: subjectValid ? '✅' : '❌',
+            mensaje: messageValid ? '✅' : '❌',
+            todo: allValid ? '✅ VÁLIDO' : '❌ INCOMPLETO'
+        });
+        
+        return allValid;
+    }
+    
+    // MANEJAR ENVÍO DEL FORMULARIO
+    contactForm.addEventListener('submit', function(event) {
+        console.log('🟡 Botón enviar presionado');
+        
+        // 1. Prevenir envío automático
+        event.preventDefault();
+        event.stopPropagation();
+        
+        console.log('🟡 Validando formulario...');
+        
+        // 2. Validar
+        const isValid = validateAll();
+        
+        if (!isValid) {
+            console.log('🔴 Formulario inválido - NO enviar');
+            // Mostrar mensaje general
+            const formStatus = document.getElementById('form-status');
+            if (formStatus) {
+                formStatus.textContent = 'Por favor, completa los campos marcados';
+                formStatus.className = 'p-4 rounded-lg mt-4 bg-red-100 text-red-700 border border-red-300';
+                formStatus.classList.remove('hidden');
+            }
             return;
         }
         
-        console.log('✅ Formulario válido - procediendo con envío');
+        console.log('🟢 Formulario VÁLIDO - Enviando...');
         
-        // Mostrar estado de carga
+        // 3. Deshabilitar botón y mostrar carga
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
         
-        showStatus('Enviando tu mensaje...', 'info');
+        // Mostrar mensaje de envío
+        const formStatus = document.getElementById('form-status');
+        if (formStatus) {
+            formStatus.textContent = 'Enviando tu mensaje...';
+            formStatus.className = 'p-4 rounded-lg mt-4 bg-blue-100 text-blue-700 border border-blue-300';
+            formStatus.classList.remove('hidden');
+        }
         
-        // Preparar datos para FormSubmit
+        // 4. Crear datos para enviar
         const formData = new FormData(contactForm);
         
-        // Enviar usando FormSubmit
+        // 5. Enviar usando FormSubmit (Fetch API)
         fetch(contactForm.action, {
             method: 'POST',
             body: formData,
@@ -186,71 +211,45 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .then(response => {
-            console.log('📨 Respuesta recibida:', response.status);
+            console.log('📨 Respuesta del servidor:', response.status);
             
             if (response.ok) {
-                // Redirigir a la página de gracias
+                // ÉXITO: Redirigir a página de gracias
+                console.log('✅ Mensaje enviado - Redirigiendo...');
                 window.location.href = 'https://miltongtzz.github.io/portafolio/gracias.html';
             } else {
-                throw new Error('Error en el servidor');
+                // ERROR
+                throw new Error('Error en el servidor: ' + response.status);
             }
         })
         .catch(error => {
-            console.error('❌ Error en el envío:', error);
+            console.error('❌ Error al enviar:', error);
             
-            // Fallback: enviar el formulario tradicionalmente
-            showStatus('Error al enviar. Intentando nuevamente...', 'error');
+            // Mostrar error
+            if (formStatus) {
+                formStatus.textContent = 'Error al enviar. Intenta nuevamente.';
+                formStatus.className = 'p-4 rounded-lg mt-4 bg-red-100 text-red-700 border border-red-300';
+            }
             
+            // Restaurar botón
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            
+            // Intentar envío tradicional después de 2 segundos
             setTimeout(() => {
-                // Quitar el event listener temporalmente para evitar loop
+                console.log('🔄 Intentando envío tradicional...');
                 contactForm.removeEventListener('submit', arguments.callee);
-                // Enviar de forma tradicional
                 contactForm.submit();
             }, 2000);
-        })
-        .finally(() => {
-            // Restaurar botón después de 5 segundos si hubo error
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            }, 5000);
         });
     });
     
-    // Limpiar errores cuando el usuario escribe
-    const allInputs = [nameInput, emailInput, subjectInput, messageInput];
-    allInputs.forEach(input => {
-        input.addEventListener('input', function() {
-            clearError(this);
-        });
-        
-        input.addEventListener('blur', function() {
-            validateField(this);
-        });
-    });
+    console.log('✅ Formulario configurado correctamente');
     
-    console.log('✅ Form.js configurado correctamente');
-    
-    // DEBUG: función para probar
-    window.testForm = function(testName) {
-        console.log('🧪 Probando formulario...');
-        
-        // Simular datos
-        if (testName === 'bueno') {
-            nameInput.value = 'Juan';
-            emailInput.value = 'juan@test.com';
-            subjectInput.value = 'Consulta de prueba';
-            messageInput.value = 'Este es un mensaje de prueba con más de 10 caracteres';
-            console.log('✅ Datos de prueba cargados');
-        } else if (testName === 'malo') {
-            nameInput.value = 'J'; // Solo 1 carácter
-            emailInput.value = 'noemail';
-            subjectInput.value = 'Hola';
-            messageInput.value = 'Corto';
-            console.log('❌ Datos inválidos cargados');
-        }
-        
-        // Validar
-        validateForm();
+    // DEBUG: Función para probar
+    window.probarNombre = function(nombre) {
+        nameInput.value = nombre || 'Test';
+        console.log('🔍 Probando con nombre:', nameInput.value);
+        validateName();
     };
 });
