@@ -1,19 +1,10 @@
-// Manejo del formulario de contacto
+// form.js - COMPLETO para FormSubmit
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contact-form');
     const formStatus = document.getElementById('form-status');
     const submitBtn = document.getElementById('submit-btn');
     
     if (!contactForm) return;
-    
-    // Configuración para desarrollo local (sin redirección)
-    // Si estás en localhost, desactivar la redirección
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        const nextInput = contactForm.querySelector('input[name="_next"]');
-        if (nextInput) {
-            nextInput.value = ''; // Vaciar para evitar redirección en local
-        }
-    }
     
     // Validación en tiempo real
     const inputs = contactForm.querySelectorAll('input[required], textarea[required]');
@@ -74,11 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
     
-    // Manejo del envío del formulario
-    contactForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Validar todos los campos
+    // Validación antes de enviar (FormSubmit maneja el envío real)
+    contactForm.addEventListener('submit', function(e) {
         let isValid = true;
         inputs.forEach(input => {
             const event = new Event('blur');
@@ -89,68 +77,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         if (!isValid) {
+            e.preventDefault();
             showStatus('Por favor, corrige los errores en el formulario', 'error');
             return;
         }
         
-        // Deshabilitar botón y mostrar carga
+        // Si pasa validación, FormSubmit se encarga
         submitBtn.disabled = true;
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
         
-        try {
-            // Enviar formulario usando FormSubmit
-            const formData = new FormData(contactForm);
-            
-            const response = await fetch(contactForm.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-            
-            if (response.ok) {
-                // Éxito
-                showStatus('¡Mensaje enviado con éxito! Te responderé pronto.', 'success');
-                contactForm.reset();
-                
-                // Resetear errores
-                inputs.forEach(input => {
-                    const errorSpan = document.getElementById(`${input.id}-error`);
-                    clearError(input, errorSpan);
-                });
-                
-            } else {
-                // Error del servidor
-                const data = await response.json();
-                throw new Error(data.error || 'Error al enviar el mensaje');
-            }
-            
-        } catch (error) {
-            // Error de red o del servidor
-            console.error('Error:', error);
-            
-            // Fallback: enviar usando el método tradicional
-            showStatus('Enviando... Serás redirigido a confirmación.', 'info');
-            
-            // Esperar un momento y luego enviar el formulario tradicionalmente
-            setTimeout(() => {
-                contactForm.removeEventListener('submit', arguments.callee);
-                contactForm.submit();
-            }, 1000);
-            
-        } finally {
-            // Restaurar botón después de 3 segundos
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-                formStatus.classList.add('hidden');
-            }, 3000);
-        }
+        showStatus('Redirigiendo a confirmación...', 'info');
+        
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }, 5000);
     });
     
     function showStatus(message, type) {
+        if (!formStatus) return;
+        
         formStatus.textContent = message;
         formStatus.className = 'mt-4 p-4 rounded-lg block';
         
