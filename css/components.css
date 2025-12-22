@@ -696,3 +696,151 @@
     opacity: 1;
     transform: translateY(0);
 }
+
+
+/* ===== HABILIDADES MEJORADAS PARA PANTALLAS HORIZONTALES ===== */
+
+/* Iconos grandes para títulos */
+.skill-icon-lg {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    flex-shrink: 0;
+    transition: all var(--transition-base);
+}
+
+/* Efecto hover mejorado */
+.hover-lift {
+    transition: all var(--transition-base);
+}
+
+.hover-lift:hover {
+    transform: translateY(-3px);
+}
+
+/* Grid responsivo mejorado */
+@media (max-width: 639px) {
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .skill-category {
+        padding: 1.25rem;
+    }
+    
+    .skill-icon-lg {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+    
+    .learning-card {
+        padding: 1rem;
+    }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .sm\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .lg\:col-span-2 {
+        grid-column: span 2;
+    }
+    
+    .lg\:grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .xl\:col-span-1 {
+        grid-column: span 1;
+    }
+    
+    .lg\:grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .lg\:col-span-2 {
+        grid-column: span 2;
+    }
+}
+
+@media (min-width: 1280px) {
+    .xl\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .xl\:col-span-1 {
+        grid-column: span 1;
+    }
+}
+
+/* Para pantallas horizontales específicamente */
+@media (orientation: landscape) and (max-height: 600px) {
+    .py-16 {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    
+    .lg\:py-20 {
+        padding-top: 2.5rem !important;
+        padding-bottom: 2.5rem !important;
+    }
+    
+    .mb-12 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .lg\:mb-16 {
+        margin-bottom: 2rem !important;
+    }
+    
+    .skill-category {
+        padding: 1rem !important;
+    }
+    
+    .learning-card {
+        padding: 0.75rem !important;
+    }
+    
+    .skill-icon-lg {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1.25rem !important;
+    }
+    
+    h3.text-2xl {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* Ajustes específicos para pantallas muy anchas */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .xl\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    
+    .lg\:grid-cols-5 {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+    }
+}
